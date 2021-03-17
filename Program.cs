@@ -10,43 +10,68 @@ namespace DotnetCoreDIWithParameter
             var serviceCollection = new ServiceCollection();
 
             serviceCollection.AddScoped<IAction, Action>();
-            serviceCollection.AddScoped<IDog>(svc => new Dog(svc.GetService<IAction>()));
+            serviceCollection.AddScoped<IMachine, Machine>();
+            serviceCollection.AddScoped<IDog>(svc => new Dog(svc.GetService<IAction>(),
+                                                             svc.GetService<IMachine>()));
 
             var serviceProvider = serviceCollection.BuildServiceProvider();
             var dog = serviceProvider.GetService<IDog>();
 
-            dog.CallShakeHands();
+            dog.DogDance();
+            dog.DogGlow();
         }
 
         public interface IAction
         {
-            void ShakeHands();
+            void Dance();
         }
 
         public class Action : IAction
         {
-            public void ShakeHands()
+            public void Dance()
             {
-                Console.WriteLine("Shaking hands!");
+                Console.WriteLine("Dancing!");
+            }
+        }
+
+        public interface IMachine
+        {
+            void Glow();
+        }
+
+        public class Machine : IMachine
+        {
+            public void Glow()
+            {
+                Console.WriteLine("Glowing!");
             }
         }
 
         public interface IDog
         {
-            void CallShakeHands();
+            void DogDance();
+            void DogGlow();
         }
 
         public class Dog : IDog
         {
             IAction _action;
-            public Dog(IAction action)
+            IMachine _machine;
+            public Dog(IAction action, IMachine machine)
             {
                 _action = action;
+                _machine = machine;
             }
-            public void CallShakeHands()
+            public void DogDance()
             {
-                Console.WriteLine("Dog: ");
-                _action.ShakeHands();
+                Console.WriteLine("Dog is");
+                _action.Dance();
+            }
+
+            public void DogGlow()
+            {
+                Console.WriteLine("Dog is");
+                _machine.Glow();
             }
         }
     }
