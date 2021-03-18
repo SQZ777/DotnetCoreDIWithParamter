@@ -10,9 +10,7 @@ namespace DotnetCoreDIWithParameter
             var serviceCollection = new ServiceCollection();
 
             serviceCollection.AddScoped<IAction, Action>();
-            serviceCollection.AddScoped<IMachine, Machine>();
-            serviceCollection.AddScoped<IDog>(svc => new Dog(svc.GetService<IAction>(),
-                                                             svc.GetService<IMachine>()));
+            serviceCollection.AddScoped<IDog>(svc => new Dog(svc.GetService<IAction>(), new Machine()));
 
             var serviceProvider = serviceCollection.BuildServiceProvider();
             var dog = serviceProvider.GetService<IDog>();
@@ -34,19 +32,13 @@ namespace DotnetCoreDIWithParameter
             }
         }
 
-        public interface IMachine
-        {
-            void Glow();
-        }
-
-        public class Machine : IMachine
+        public class Machine
         {
             public void Glow()
             {
                 Console.WriteLine("Glowing!");
             }
         }
-
         public interface IDog
         {
             void DogDance();
@@ -56,8 +48,8 @@ namespace DotnetCoreDIWithParameter
         public class Dog : IDog
         {
             IAction _action;
-            IMachine _machine;
-            public Dog(IAction action, IMachine machine)
+            Machine _machine;
+            public Dog(IAction action, Machine machine)
             {
                 _action = action;
                 _machine = machine;
